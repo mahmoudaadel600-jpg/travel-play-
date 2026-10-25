@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>رحلة السفر – لعبة تعليمية</title>
+<style>
+:root{--bg:#e9f5ff;--card:#fff;--ink:#23324a;--blue:#2e9be6;--green:#2fb36d;--red:#e5524f;--gold:#ffc83d;--soft:#f3f8fd;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13213a;--card:#1d2f50;--ink:#f1f6ff;--soft:#263c63}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);display:flex;justify-content:center;padding:14px}
+#app{width:100%;max-width:640px}
+h1,h2,p{margin:0}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.stars{font-size:26px;letter-spacing:2px}
+.bar{height:14px;background:var(--soft);border-radius:9px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .6s}
+.card{background:var(--card);border-radius:24px;padding:22px 18px;box-shadow:0 8px 24px rgba(30,70,120,.15);animation:in .5s ease}
+@keyframes in{from{opacity:0;transform:translateX(-40px) scale(.97)}to{opacity:1;transform:none}}
+.emoji{font-size:72px;text-align:center;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.q{font-size:28px;font-weight:700;text-align:center;margin:8px 0 18px;line-height:1.6}
+.opt{display:flex;align-items:center;gap:12px;width:100%;font:inherit;font-size:26px;font-weight:600;color:var(--ink);background:var(--soft);border:3px solid transparent;border-radius:18px;padding:14px 16px;margin-bottom:12px;cursor:pointer;transition:transform .15s,background .2s}
+.opt:active{transform:scale(.97)}
+.opt b{font-size:34px}
+.opt.ok{background:#c9f3dc;border-color:var(--green);color:#14502f;animation:pop .5s}
+.opt.no{background:#ffd9d8;border-color:var(--red);color:#7a1d1b;animation:shake .4s}
+.opt:disabled{cursor:default}
+@keyframes pop{50%{transform:scale(1.06)}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.fb{min-height:74px;border-radius:16px;padding:12px 14px;font-size:22px;text-align:center;line-height:1.6;display:none;margin-bottom:12px}
+.fb.good{display:block;background:#c9f3dc;color:#14502f}
+.fb.bad{display:block;background:#fff0c9;color:#6a4a00}
+.btn{display:block;width:100%;font:inherit;font-size:26px;font-weight:700;color:#fff;background:var(--blue);border:0;border-radius:18px;padding:14px;cursor:pointer;box-shadow:0 5px 0 #1c75b3}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #1c75b3}
+.btn.g{background:var(--green);box-shadow:0 5px 0 #1f8450}
+details{margin-top:14px;background:var(--card);border-radius:16px;padding:10px 14px;font-size:19px;line-height:2}
+summary{cursor:pointer;font-weight:700;font-size:20px}
+.big{font-size:90px;text-align:center}
+.score{font-size:34px;font-weight:700;text-align:center;margin:8px 0}
+.msg{font-size:24px;text-align:center;margin-bottom:18px}
+.conf{position:fixed;top:-40px;font-size:30px;animation:fall linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top"><h2>✈️ رحلة السفر</h2><div class="stars" id="stars"></div></div>
+  <div class="bar"><i id="bar"></i></div>
+  <div id="stage"></div>
+  <details><summary>📖 اقرأ النص</summary>
+    <p>مما لا شكَّ فيه أن السفر في الماضي كان صعباً ويحتاج الكثير من الجهد والوقت، لكن مع تطور التكنولوجيا أصبح السفر في الحاضر أسهل من السفر في الماضي. فنحن اليوم نستخدم الطائرات والسيارات والحافلات للانتقال من مكانٍ إلى آخر.</p>
+    <p>في الحقيقة أنا أرى أن للسفر فوائد كثيرة؛ مثل اكتشاف ثقافاتٍ مختلفة، والترفيه عن النفس، وتحصيل العلم، واكتساب الخبرات، وأيضاً تكوين صداقاتٍ جديدة.</p>
+    <p>من وجهة نظري، الإمارات واحدة من أهم الوجهات السياحية للسفر.</p>
+  </details>
+</div>
+<script>
+const Q=[
+ {e:"🐪",q:"كيف كان السفر في الماضي؟",o:["صعباً","سهلاً","سريعاً"],a:0,h:"النص يقول: كان السفر في الماضي صعباً ويحتاج الكثير من الجهد والوقت."},
+ {e:"🚗",q:"أيُّ وسيلة نستخدمها اليوم للسفر؟",o:["الطائرة","الحِصان","الجمل"],a:0,h:"نحن اليوم نستخدم الطائرات والسيارات والحافلات."},
+ {e:"🌍",q:"ما فائدة من فوائد السفر؟",o:["اكتشاف ثقافات مختلفة","التعب","ضياع الوقت"],a:0,h:"من فوائد السفر: اكتشاف ثقافاتٍ مختلفة."},
+ {e:"📱",q:"مع تطور التكنولوجيا أصبح السفر …",o:["أصعب","أسهل","أبطأ"],a:1,h:"السفر في الحاضر أسهل من السفر في الماضي."},
+ {e:"🕌",q:"ما الوجهة السياحية المهمة للسفر في رأي الكاتب؟",o:["الإمارات","الغابة","القمر"],a:0,h:"النص يقول: الإمارات واحدة من أهم الوجهات السياحية."}
+];
+const good=["أحسنت! 🎉","ممتاز! ⭐","رائع! 👏","شاطر! 🌟","برافو! 🥳"];
+const letters=["أ","ب","ج"];
+let i=0,score=0,first=true;
+const $=id=>document.getElementById(id);
+function bar(){ $("bar").style.width=(i/Q.length*100)+"%"; $("stars").textContent="⭐".repeat(score)+"☆".repeat(Q.length-score); }
+function start(){
+  i=0;score=0;bar();
+  $("stage").innerHTML=`<div class="card"><div class="big">🌍✈️</div><h1 class="q">هيا نسافر معاً!</h1><p class="msg">أجب عن ٥ أسئلة بسيطة واجمع النجوم ⭐</p><button class="btn g" id="go">ابدأ اللعب ▶</button></div>`;
+  $("go").onclick=show;
+}
+function show(){
+  const d=Q[i];first=true;bar();
+  $("stage").innerHTML=`<div class="card"><div class="emoji">${d.e}</div><p class="q">${i+1}) ${d.q}</p>
+  <div id="opts">${d.o.map((t,k)=>`<button class="opt" data-k="${k}"><b>${letters[k]}</b> ${t}</button>`).join("")}</div>
+  <div class="fb" id="fb"></div><div id="nx"></div></div>`;
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b,d));
+}
+function pick(b,d){
+  const k=+b.dataset.k,fb=$("fb");
+  if(k===d.a){
+    b.classList.add("ok");
+    document.querySelectorAll(".opt").forEach(x=>x.disabled=true);
+    if(first)score++;
+    bar();
+    fb.className="fb good";fb.innerHTML=`<b>${good[i]}</b><br>${d.h}`;
+    $("nx").innerHTML=`<button class="btn g" id="next">${i<Q.length-1?"السؤال التالي ◀":"النتيجة 🏆"}</button>`;
+    $("next").onclick=()=>{i++;i<Q.length?show():end();};
+  }else{
+    first=false;b.classList.add("no");b.disabled=true;
+    fb.className="fb bad";fb.innerHTML=`ليست صحيحة 🙂 حاول مرة أخرى!<br>💡 تلميح: ${d.h}`;
+  }
+}
+function end(){
+  i=Q.length;bar();
+  const m=score===5?"أنت بطل السفر! 🏆":score>=3?"عمل جميل! استمر 💪":"جيد! حاول مرة أخرى لتجمع نجوماً أكثر 🌱";
+  $("stage").innerHTML=`<div class="card"><div class="big">${score>=3?"🏆":"🎒"}</div><p class="score">${score} من ${Q.length}</p><div class="stars" style="text-align:center;font-size:40px;margin-bottom:8px">${"⭐".repeat(score)}</div><p class="msg">${m}</p><button class="btn" id="again">العب مرة أخرى 🔄</button></div>`;
+  $("again").onclick=start;
+  if(score>=3)for(let n=0;n<30;n++){const c=document.createElement("div");c.className="conf";c.textContent=["🎉","⭐","✈️","🎈"][n%4];c.style.left=Math.random()*100+"vw";c.style.animationDuration=(2+Math.random()*2)+"s";document.body.appendChild(c);setTimeout(()=>c.remove(),4500);}
+}
+start();
+</script>
+</body>
+</html>
